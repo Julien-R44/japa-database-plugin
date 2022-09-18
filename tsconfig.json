@@ -20,5 +20,5 @@
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true
   },
-  "exclude": ["tests", "bin", "dist", "scripts"]
+  "exclude": ["tests", "bin", "dist", "scripts", "tests-helpers"]
 }
