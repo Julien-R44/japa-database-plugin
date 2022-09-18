@@ -48,6 +48,7 @@ export class DatabaseUtils {
         bindings = [this.connection.client.database()]
         break
       case 'Client_SQLite3':
+      case 'Client_BetterSQLite3':
         query = "SELECT name AS table_name FROM sqlite_master WHERE type='table'"
         break
     }
