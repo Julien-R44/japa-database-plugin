@@ -1,7 +1,7 @@
 {
   "name": "@julr/japa-database-plugin",
   "type": "module",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "packageManager": "pnpm@7.11.0",
   "description": "Database assertions and testing helpers for Japa",
   "author": "Julien Ripouteau <julien@ripouteau.com>",
