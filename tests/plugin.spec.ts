@@ -2,26 +2,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 import { test } from '@japa/runner'
-import knex from 'knex'
 import { DatabaseUtils } from '../src/utils.js'
 import { Database } from '../src/database.js'
-import type { Knex } from 'knex'
+import { setupConnection } from '../tests-helpers/index.js'
 
-const credentials = {
-  host: 'localhost',
-  user: 'japa',
-  password: 'password',
-  database: 'japa',
-}
-
-const connectionConfig: { [key: string]: Knex.Config } = {
-  sqlite: { client: 'sqlite', connection: { filename: ':memory:' } },
-  mysql: { client: 'mysql2', connection: { ...credentials, port: 3306 } },
-  postgres: { client: 'pg', connection: { ...credentials, port: 5432 } },
-  mssql: { client: 'mssql', connection: { ...credentials, port: 1433 } },
-}
-
-const connection = knex(connectionConfig[process.env.DB!])
+const connection = setupConnection()
 DatabaseUtils.setConnection(connection)
 
 const getTableCount = async (table: string) => {
@@ -31,12 +16,12 @@ const getTableCount = async (table: string) => {
 
 test.group('Plugin', (group) => {
   group.setup(async () => {
-    await connection.schema.createTable('users', (table) => {
-      table.increments('id')
-    })
-    await connection.schema.createTable('posts', (table) => {
-      table.increments('id')
-    })
+    try {
+      await connection.schema.createTable('users', (table) => table.increments('id'))
+      await connection.schema.createTable('posts', (table) => table.increments('id'))
+    } catch (err) {
+      console.log(err)
+    }
   })
 
   group.teardown(async () => {

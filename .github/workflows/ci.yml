@@ -75,4 +75,4 @@ jobs:
         run: docker-compose up -d
 
       - name: Test
-        run: pnpm test:all
+        run: pnpm test:postgres && pnpm test:sqlite
