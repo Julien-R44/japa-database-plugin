@@ -19,6 +19,8 @@ pnpm install @julr/japa-database-plugin
 The first step is to register the plugin in your Japa configuration : 
 
 ```ts
+import { database } from '@julr/japa-database-plugin'
+
 configure({
   ...processCliArgs(process.argv.slice(2)),
   ...{
