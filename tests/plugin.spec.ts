@@ -16,12 +16,8 @@ const getTableCount = async (table: string) => {
 
 test.group('Plugin', (group) => {
   group.setup(async () => {
-    try {
-      await connection.schema.createTable('users', (table) => table.increments('id'))
-      await connection.schema.createTable('posts', (table) => table.increments('id'))
-    } catch (err) {
-      console.log(err)
-    }
+    await connection.schema.createTable('users', (table) => table.increments('id'))
+    await connection.schema.createTable('posts', (table) => table.increments('id'))
   })
 
   group.teardown(async () => {
