@@ -76,8 +76,16 @@ The plugin proposes the following assertions:
 
 ```ts
 test('My test', async ({ database }) => {
+  // Assert that an user with jul@japa.com in DB
   await database.assertHas('users', { email: 'jul@japa.com' })
+
+  // Assert that we have 5 users with bonjour@ok.com in DB
+  await database.assertHas('users', { email: 'bonjour@ok.com' }, 5)
+
+  // Assert that the db does not have the given row
   await database.assertMissing('users', { email: 'shouldNotBe@inDatabase.com'})
+
+  // Assert that the db 5 users rows
   await database.assertHasCount('users', 5)
 })
 ```

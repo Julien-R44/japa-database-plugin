@@ -16,7 +16,10 @@ const getTableCount = async (table: string) => {
 
 test.group('Plugin', (group) => {
   group.setup(async () => {
-    await connection.schema.createTable('users', (table) => table.increments('id'))
+    await connection.schema.createTable('users', (table) => {
+      table.increments('id')
+      table.string('name')
+    })
     await connection.schema.createTable('posts', (table) => table.increments('id'))
   })
 
@@ -49,13 +52,13 @@ test.group('Plugin', (group) => {
     assert.deepEqual(await getTableCount('posts'), 0)
   })
 
-  test('assertCount', async () => {
+  test('assertCount', async ({ assert }) => {
     await connection.table('users').insert({})
     await connection.table('posts').insert({})
     await connection.table('users').insert({})
     await connection.table('posts').insert({})
 
-    const db = new Database(connection)
+    const db = new Database(connection, undefined, assert)
 
     await db.assertCount('users', 2)
     await db.assertCount('posts', 2)
@@ -66,11 +69,11 @@ test.group('Plugin', (group) => {
     await db.assertCount('posts', 0)
   })
 
-  test('assertHas', async () => {
+  test('assertHas', async ({ assert }) => {
     await connection.table('users').insert({ id: 1 })
     await connection.table('posts').insert({ id: 1 })
 
-    const db = new Database(connection)
+    const db = new Database(connection, undefined, assert)
 
     await db.assertHas('users', { id: 1 })
     await db.assertHas('posts', { id: 1 })
@@ -79,5 +82,17 @@ test.group('Plugin', (group) => {
 
     await db.assertMissing('users', { id: 1 })
     await db.assertMissing('posts', { id: 1 })
+  })
+
+  test('assertHas with count', async ({ assert }) => {
+    await connection.table('users').insert({ name: 'bonjour' })
+    await connection.table('users').insert({ name: 'bonjour' })
+
+    const db = new Database(connection, undefined, assert)
+
+    await db.assertHas('users', { name: 'bonjour' }, 2)
+    assert.rejects(async () => {
+      await db.assertHas('users', { name: 'bonjour' }, 3)
+    })
   })
 })

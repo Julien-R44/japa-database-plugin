@@ -22,14 +22,16 @@ export class Database {
 
   /**
    * Assert that the db contains the given data in the given table
+   * If count is provided, then it will assert that X rows matching the data exists
    */
-  public async assertHas(table: string, data: any) {
+  public async assertHas(table: string, data: any, count?: number) {
     const result = await this.client.select('*').from(table).where(data)
+    const isCountValid = count ? result.length === count : result.length >= 1
 
     if (this.expect) {
-      this.expect(result).toHaveLength(1)
+      this.expect(isCountValid).toBe(true)
     } else if (this.assert) {
-      this.assert.isTrue(result.length === 1)
+      this.assert.isTrue(isCountValid)
     }
   }
 
