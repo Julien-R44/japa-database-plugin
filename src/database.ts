@@ -16,7 +16,7 @@ export class Database {
   /***
    * Return the knex client
    */
-  public async connection() {
+  public connection() {
     return this.client
   }
 
