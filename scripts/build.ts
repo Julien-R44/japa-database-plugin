@@ -39,7 +39,7 @@ async function generateTypescriptDefinitions() {
 
 async function build() {
   await cleanUp()
-  await Promise.all([compileToESM(), compileToCJS(), generateTypescriptDefinitions()])
+  await Promise.all([compileToESM() /*compileToCJS()*/, , generateTypescriptDefinitions()])
 
   console.log('')
 
