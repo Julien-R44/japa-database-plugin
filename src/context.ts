@@ -14,6 +14,7 @@ export class PluginContext {
     const connection = knex(options.database)
     DatabaseUtils.setConnection(connection)
 
+    this.connection = connection
     this.database = new Database(connection)
   }
 
