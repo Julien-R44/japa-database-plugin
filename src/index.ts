@@ -1,20 +1,12 @@
 import { DatabaseUtils } from './utils.js'
 import { PluginContext } from './context.js'
 import { isModuleInstalled } from './utils/index.js'
-import type { Database } from './database.js'
 import type { PluginConfig } from './contracts.js'
 import type { PluginFn } from '@japa/runner'
 
-export { DatabaseUtils }
+import './types/extended.js'
 
-/**
- * Augment the test context with the database instance
- */
-declare module '@japa/runner' {
-  interface TestContext {
-    database: Database
-  }
-}
+export { DatabaseUtils }
 
 /**
  * Database plugin for Japa

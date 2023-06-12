@@ -2,16 +2,8 @@ import { expect } from 'expect'
 import { PluginContext } from '../context.js'
 import type { MatcherFunction } from 'expect'
 
-declare module 'expect' {
-  interface Matchers<R> {
-    toBeInTable(table: string, count?: number): Promise<R>
-    toHaveCountInTable(table: string, count: number): Promise<R>
-    toNotBeInTable(table: string): Promise<R>
-  }
-}
-
 const toBeInTable: MatcherFunction<any> = async function (value: any, table: string, count = 1) {
-  const pass = await PluginContext.database.assertHas(table, value, count)
+  const pass = await PluginContext.database.assertHas(table, value, count, false)
   let message = ''
 
   if (!pass) {
@@ -34,7 +26,7 @@ const toHaveCountInTable: MatcherFunction<any> = async function (
   table: string,
   count: number
 ) {
-  const pass = await PluginContext.database.assertCount(table, count)
+  const pass = await PluginContext.database.assertCount(table, count, false)
 
   let message = ''
 
@@ -54,7 +46,7 @@ const toHaveCountInTable: MatcherFunction<any> = async function (
 }
 
 const toNotBeInTable: MatcherFunction<any> = async function (value: any, table: string) {
-  const pass = await PluginContext.database.assertMissing(table, value)
+  const pass = await PluginContext.database.assertMissing(table, value, false)
   let message = ''
 
   if (!pass) {
