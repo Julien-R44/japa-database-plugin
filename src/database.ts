@@ -1,16 +1,11 @@
+import { PluginContext } from './context.js'
 import type { Knex } from 'knex'
-import type { Expect } from '@japa/expect'
-import type { Assert } from '@japa/assert'
 
 export class Database {
   private client: Knex
-  private expect?: Expect
-  private assert?: Assert
 
-  constructor(connection: Knex, expect?: Expect, assert?: Assert) {
+  constructor(connection: Knex) {
     this.client = connection
-    this.expect = expect
-    this.assert = assert
   }
 
   /***
@@ -18,6 +13,16 @@ export class Database {
    */
   public connection() {
     return this.client
+  }
+
+  private get expect() {
+    // @ts-expect-error
+    return PluginContext.currentTestContext?.expect
+  }
+
+  private get assert() {
+    // @ts-expect-error
+    return PluginContext.currentTestContext?.assert
   }
 
   /**
@@ -33,6 +38,8 @@ export class Database {
     } else if (this.assert) {
       this.assert.isTrue(isCountValid)
     }
+
+    return isCountValid
   }
 
   /**
@@ -47,6 +54,8 @@ export class Database {
     } else if (this.assert) {
       this.assert.isTrue(countResult === count)
     }
+
+    return countResult === count
   }
 
   /**
@@ -60,5 +69,7 @@ export class Database {
     } else if (this.assert) {
       this.assert.isTrue(result.length === 0)
     }
+
+    return result.length === 0
   }
 }

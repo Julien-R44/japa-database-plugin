@@ -2,6 +2,7 @@ import { pathToFileURL } from 'node:url'
 import { assert } from '@japa/assert'
 import { specReporter } from '@japa/spec-reporter'
 import { configure, processCliArgs, run } from '@japa/runner'
+import { expect } from '@japa/expect'
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +21,7 @@ configure({
   ...processCliArgs(process.argv.slice(2)),
   ...{
     files: ['tests/**/*.spec.ts'],
-    plugins: [assert()],
+    plugins: [assert(), expect()],
     reporters: [specReporter()],
     importer: (filePath) => import(pathToFileURL(filePath).href),
   },

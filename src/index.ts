@@ -1,6 +1,7 @@
-import knex from 'knex'
-import { Database } from './database.js'
 import { DatabaseUtils } from './utils.js'
+import { PluginContext } from './context.js'
+import { isModuleInstalled } from './utils/index.js'
+import type { Database } from './database.js'
 import type { PluginConfig } from './contracts.js'
 import type { PluginFn } from '@japa/runner'
 
@@ -19,21 +20,19 @@ declare module '@japa/runner' {
  * Database plugin for Japa
  */
 export function database(options: PluginConfig): PluginFn {
-  const connection = knex(options.database)
-  DatabaseUtils.setConnection(connection)
+  PluginContext.init(options)
 
   return async function (config, __, { TestContext }) {
-    let database: Database | null = null
+    TestContext.created((ctx) => PluginContext.setCurrentTestContext(ctx))
 
-    TestContext.getter(
-      'database',
-      function () {
-        database = new Database(connection, this.expect, this.assert)
-        return database
-      },
-      true
-    )
+    if (isModuleInstalled('@japa/expect')) {
+      await import('./integrations/expect.js')
+    }
 
-    config.teardown.push(async () => connection.destroy())
+    TestContext.getter('database', () => PluginContext.database, true)
+
+    config.teardown.push(async () => {
+      await PluginContext.connection.destroy()
+    })
   }
 }

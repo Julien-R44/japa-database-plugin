@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { test } from '@japa/runner'
+import { TestContext, test } from '@japa/runner'
 import { DatabaseUtils } from '../src/utils.js'
 import { Database } from '../src/database.js'
 import { setupConnection } from '../tests-helpers/index.js'
+import { PluginContext } from '../src/context.js'
 
 const connection = setupConnection()
 DatabaseUtils.setConnection(connection)
@@ -13,6 +14,8 @@ const getTableCount = async (table: string) => {
   const result = await connection.count({ count: '*' }).from(table)
   return +result[0].count!
 }
+
+TestContext.created((ctx) => PluginContext.setCurrentTestContext(ctx))
 
 test.group('Plugin', (group) => {
   group.setup(async () => {
@@ -58,7 +61,7 @@ test.group('Plugin', (group) => {
     await connection.table('users').insert({})
     await connection.table('posts').insert({})
 
-    const db = new Database(connection, undefined, assert)
+    const db = new Database(connection)
 
     await db.assertCount('users', 2)
     await db.assertCount('posts', 2)
@@ -73,7 +76,7 @@ test.group('Plugin', (group) => {
     await connection.table('users').insert({ id: 1 })
     await connection.table('posts').insert({ id: 1 })
 
-    const db = new Database(connection, undefined, assert)
+    const db = new Database(connection)
 
     await db.assertHas('users', { id: 1 })
     await db.assertHas('posts', { id: 1 })
@@ -88,7 +91,7 @@ test.group('Plugin', (group) => {
     await connection.table('users').insert({ name: 'bonjour' })
     await connection.table('users').insert({ name: 'bonjour' })
 
-    const db = new Database(connection, undefined, assert)
+    const db = new Database(connection)
 
     await db.assertHas('users', { name: 'bonjour' }, 2)
     assert.rejects(async () => {
